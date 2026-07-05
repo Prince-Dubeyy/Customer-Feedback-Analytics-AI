@@ -115,7 +115,7 @@ export default function Dashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {sentimentData.map((entry, index) => (
+                  {sentimentData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -155,7 +155,7 @@ export default function Dashboard() {
                 />
                 <Bar dataKey="value" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={24}>
                   {
-                    (stats?.top_complaints || []).map((entry: any, index: number) => (
+                    (stats?.top_complaints || []).map((_: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={index === 0 ? '#ef4444' : '#6366f1'} />
                     ))
                   }

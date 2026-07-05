@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Clock, ChevronRight, Trash2 } from 'lucide-react';
+import { Brain, Clock, Trash2 } from 'lucide-react';
 import { getMemories, resetData } from '../services/api';
 
 export default function MemoryTimeline() {
