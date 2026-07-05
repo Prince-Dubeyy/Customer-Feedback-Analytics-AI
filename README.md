@@ -1,6 +1,9 @@
 # ProductPulse AI
 > Memory-Powered Customer Feedback Intelligence Agent
 
+**Live Demo**: [https://customer-feedback-analytics-ai.vercel.app](https://customer-feedback-analytics-ai.vercel.app)
+**Backend API**: [https://customer-feedback-analytics-ai.onrender.com](https://customer-feedback-analytics-ai.onrender.com)
+
 ProductPulse AI is a hackathon-winning SaaS application that ingests customer feedback and extracts deep, actionable insights using two proprietary core technologies:
 1. **Hindsight Engine**: Retains, Recalls, and Reflects on historical feedback to detect emerging trends over time (e.g., "Checkout issues have increased by 100%").
 2. **cascadeflow Engine**: A runtime intelligence module that routes LLM requests intelligently based on budget and complexity, enforcing cost controls and providing a comprehensive audit trail.

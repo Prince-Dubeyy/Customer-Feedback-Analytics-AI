@@ -90,7 +90,7 @@ export default function MemoryTimeline() {
                     Batch #{memory.batch_id}
                   </span>
                   <span className="text-xs text-slate-500">
-                    {new Date(memory.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+                    {new Date(memory.created_at.endsWith('Z') ? memory.created_at : memory.created_at + 'Z').toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
                   </span>
                 </div>
                 
