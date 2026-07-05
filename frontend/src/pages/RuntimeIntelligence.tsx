@@ -111,7 +111,7 @@ export default function RuntimeIntelligence() {
                   className="border-b border-slate-800 hover:bg-slate-800/30 transition-colors"
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-slate-300">
-                    {new Date(log.timestamp).toLocaleTimeString()}
+                    {new Date(log.timestamp.endsWith('Z') ? log.timestamp : log.timestamp + 'Z').toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 bg-slate-700 text-slate-200 rounded text-xs border border-slate-600">
