@@ -1,0 +1,113 @@
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from sqlalchemy.orm import Session
+from sqlalchemy import desc
+from app.db.database import get_db
+from app.models.all_models import FeedbackBatch, FeedbackItem, Memory, RoutingLog
+from app.schemas.schemas import FeedbackBatchSchema, DashboardStatsResponse, MemoryResponse, RoutingLogResponse
+from app.services.feedback_service import feedback_service
+from app.core.hindsight import hindsight_engine
+
+router = APIRouter()
+
+@router.post("/reset")
+def reset_database(db: Session = Depends(get_db)):
+    db.query(FeedbackItem).delete()
+    db.query(FeedbackBatch).delete()
+    db.query(RoutingLog).delete()
+    db.query(Memory).delete()
+    db.commit()
+    return {"status": "success", "message": "Database reset successfully."}
+
+@router.post("/upload-feedback")
+async def upload_feedback(
+    file: UploadFile = None,
+    text: str = Form(None),
+    db: Session = Depends(get_db)
+):
+    if not file and not text:
+        raise HTTPException(status_code=400, detail="Must provide either a file or text.")
+        
+    content = ""
+    filename = "manual_text"
+    
+    if file:
+        content_bytes = await file.read()
+        content = content_bytes.decode('utf-8')
+        filename = file.filename
+    else:
+        content = text
+        
+    batch_id, reflection = await feedback_service.process_feedback_csv(db, filename, content)
+    
+    return {
+        "status": "success",
+        "batch_id": batch_id,
+        "reflection": reflection
+    }
+
+@router.get("/dashboard", response_model=DashboardStatsResponse)
+def get_dashboard_stats(db: Session = Depends(get_db)):
+    # Get the latest batch
+    latest_batch = db.query(FeedbackBatch).order_by(desc(FeedbackBatch.id)).first()
+    
+    if not latest_batch:
+        return DashboardStatsResponse(
+            total_feedback=0, positive=0, neutral=0, negative=0,
+            top_complaints=[], trending_issues=[], sentiment_over_time=[]
+        )
+        
+    items = db.query(FeedbackItem).filter(FeedbackItem.batch_id == latest_batch.id).all()
+    
+    total = len(items)
+    positive = sum(1 for item in items if item.sentiment == 'positive')
+    neutral = sum(1 for item in items if item.sentiment == 'neutral')
+    negative = sum(1 for item in items if item.sentiment == 'negative')
+    
+    # Calculate top complaints for the latest batch
+    complaints = {}
+    for item in items:
+        if item.is_complaint and item.topics:
+            for t in item.topics:
+                complaints[t] = complaints.get(t, 0) + 1
+                
+    top_complaints = [{"name": k, "value": v} for k, v in sorted(complaints.items(), key=lambda x: x[1], reverse=True)[:5]]
+    
+    # Fake trending issues for dashboard based on latest memory
+    latest_memory = db.query(Memory).order_by(desc(Memory.batch_id)).first()
+    trending_issues = []
+    if latest_memory:
+        trending_issues = [{"name": c, "trend": "up" if i % 2 == 0 else "down"} for i, c in enumerate(latest_memory.top_complaints)]
+
+    return DashboardStatsResponse(
+        total_feedback=total,
+        positive=positive,
+        neutral=neutral,
+        negative=negative,
+        top_complaints=top_complaints,
+        trending_issues=trending_issues,
+        sentiment_over_time=[] # To be populated if time-series data exists
+    )
+
+@router.get("/memory", response_model=list[MemoryResponse])
+def get_memories(db: Session = Depends(get_db)):
+    memories = db.query(Memory).order_by(desc(Memory.batch_id)).all()
+    return memories
+
+@router.get("/routing-log", response_model=list[RoutingLogResponse])
+def get_routing_logs(db: Session = Depends(get_db)):
+    logs = db.query(RoutingLog).order_by(desc(RoutingLog.id)).limit(100).all()
+    return logs
+
+@router.get("/report")
+def generate_report(db: Session = Depends(get_db)):
+    # Simulates an executive report using the latest memories
+    memories = db.query(Memory).order_by(desc(Memory.batch_id)).limit(3).all()
+    if not memories:
+        return {"report": "Not enough data to generate report."}
+        
+    return {
+        "report": "Executive Summary",
+        "latest_insights": memories[0].summary if memories else "",
+        "risks": memories[0].top_complaints if memories else [],
+        "opportunities": memories[0].top_requests if memories else []
+    }
