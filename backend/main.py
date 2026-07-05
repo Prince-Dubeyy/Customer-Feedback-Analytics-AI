@@ -28,7 +28,7 @@ app.include_router(endpoints.router, prefix="/api")
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "message": "ProductPulse AI Backend is running."}
+    return {"status": "healthy"}
 
 if __name__ == "__main__":
     import uvicorn
