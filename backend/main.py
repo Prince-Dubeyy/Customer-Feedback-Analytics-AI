@@ -15,16 +15,40 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS configuration for local React development
+# CORS configuration for production and local development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000"],
+    allow_origins=[
+        "https://customer-feedback-analytics-ai.vercel.app", 
+        "http://localhost:5173", 
+        "http://localhost:5174", 
+        "http://localhost:5175", 
+        "http://localhost:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(endpoints.router, prefix="/api")
+
+@app.get("/")
+def root():
+    return {
+        "status": "healthy",
+        "service": "AI-Powered Customer Feedback Analytics",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
+@app.get("/info")
+def info():
+    return {
+        "project": "AI-Powered Customer Feedback Analytics",
+        "version": "1.0.0",
+        "environment": "production"
+    }
 
 @app.get("/health")
 def health_check():
