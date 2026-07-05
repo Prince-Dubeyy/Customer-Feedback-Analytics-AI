@@ -7,8 +7,6 @@ Transform raw customer feedback into actionable business intelligence using AI, 
 
 ⚙️ **Backend API:** https://customer-feedback-analytics-ai.onrender.com
 
-📂 **GitHub Repository:** https://github.com/Prince-Dubeyy/Customer-Feedback-Analytics-AI
-
 📖 **Technical Article:** https://prince-dubey-ai.hashnode.dev/building-an-ai-powered-customer-feedback-analytics-platform-with-nlp-historical-memory-and-business-intelligence
 
 💬 **Reddit Post:** https://www.reddit.com/user/NeatPension4321/comments/1unw7hr/built_an_aipowered_customer_feedback_analytics/
