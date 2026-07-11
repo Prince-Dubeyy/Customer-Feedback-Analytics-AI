@@ -63,7 +63,7 @@ class MLService:
         """Predicts the sentiment of a given text."""
         if not self.model or not self.vectorizer:
             print("[MLService] Using fallback: Models not loaded.")
-            return "unknown"
+            return "neutral"
             
         processed_text = self.preprocess_text(text)
         if not processed_text:
@@ -71,6 +71,6 @@ class MLService:
             
         vec = self.vectorizer.transform([processed_text])
         prediction = self.model.predict(vec)
-        return prediction[0]
+        return str(prediction[0]).lower().strip()
 
 ml_service = MLService()

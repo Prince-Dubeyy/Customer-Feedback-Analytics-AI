@@ -59,9 +59,19 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     items = db.query(FeedbackItem).filter(FeedbackItem.batch_id == latest_batch.id).all()
     
     total = len(items)
-    positive = sum(1 for item in items if item.sentiment == 'positive')
-    neutral = sum(1 for item in items if item.sentiment == 'neutral')
-    negative = sum(1 for item in items if item.sentiment == 'negative')
+    positive = 0
+    neutral = 0
+    negative = 0
+    
+    for item in items:
+        sent = (item.sentiment or "neutral").lower().strip()
+        if sent == 'positive':
+            positive += 1
+        elif sent == 'negative':
+            negative += 1
+        else:
+            neutral += 1
+
     
     # Calculate top complaints for the latest batch
     complaints = {}

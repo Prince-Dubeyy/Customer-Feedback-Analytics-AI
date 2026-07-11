@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis } from 'recharts';
-import { MessageSquare, ThumbsUp, AlertTriangle, TrendingUp, Trash2 } from 'lucide-react';
+import { MessageSquare, ThumbsUp, AlertTriangle, TrendingUp, Trash2, MinusCircle } from 'lucide-react';
 import { getDashboardStats, resetData } from '../services/api';
 
 const COLORS = ['#10b981', '#6366f1', '#ef4444'];
@@ -69,10 +69,11 @@ export default function Dashboard() {
       </header>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         {[
           { label: 'Total Feedback', value: stats?.total_feedback, icon: MessageSquare, color: 'text-blue-400', bg: 'bg-blue-400/10' },
           { label: 'Positive Sentiment', value: stats?.positive, icon: ThumbsUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+          { label: 'Neutral Sentiment', value: stats?.neutral, icon: MinusCircle, color: 'text-slate-400', bg: 'bg-slate-400/10' },
           { label: 'Negative Sentiment', value: stats?.negative, icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-400/10' },
           { label: 'Trending Issues', value: stats?.trending_issues?.length || 0, icon: TrendingUp, color: 'text-amber-400', bg: 'bg-amber-400/10' },
         ].map((stat, idx) => (
@@ -126,13 +127,20 @@ export default function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-6 mt-4">
-            {sentimentData.map((s, idx) => (
-              <div key={s.name} className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx] }} />
-                <span className="text-sm text-slate-300">{s.name}</span>
-              </div>
-            ))}
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <div className="flex justify-center gap-6">
+              {sentimentData.map((s, idx) => (
+                <div key={s.name} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx] }} />
+                  <span className="text-sm text-slate-300">
+                    {s.name}: {s.value} ({stats?.total_feedback ? Math.round((s.value / stats.total_feedback) * 100) : 0}%)
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-slate-400 italic mt-2">
+              Note: Total Feedback = Positive + Neutral + Negative
+            </p>
           </div>
         </motion.div>
 
