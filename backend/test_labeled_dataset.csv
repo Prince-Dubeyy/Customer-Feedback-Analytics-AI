@@ -1,0 +1,61 @@
+review,sentiment
+"The product is amazing!",positive
+"I love using this.",positive
+"Best purchase ever.",positive
+"Highly recommended.",positive
+"Outstanding quality.",positive
+"Fantastic experience.",positive
+"Really good.",positive
+"Exceeded expectations.",positive
+"Will buy again.",positive
+"Works perfectly.",positive
+"Very satisfied.",positive
+"Great value.",positive
+"Superb.",positive
+"Excellent service.",positive
+"I am very happy.",positive
+"Absolutely wonderful.",positive
+"Top notch.",positive
+"Five stars.",positive
+"Brilliant.",positive
+"Could not be better.",positive
+"It arrived.",neutral
+"Standard packaging.",neutral
+"I bought this.",neutral
+"It is okay.",neutral
+"Normal product.",neutral
+"No strong feelings.",neutral
+"It does the job.",neutral
+"It is what it is.",neutral
+"Average.",neutral
+"Got it yesterday.",neutral
+"Just a regular item.",neutral
+"It is fine.",neutral
+"Nothing special.",neutral
+"As expected.",neutral
+"It works.",neutral
+"Not bad, not good.",neutral
+"Standard delivery.",neutral
+"I received it.",neutral
+"Middle of the road.",neutral
+"Fair.",neutral
+"Terrible product.",negative
+"I hate it.",negative
+"Worst purchase ever.",negative
+"Do not buy this.",negative
+"Broken on arrival.",negative
+"Waste of money.",negative
+"Very disappointing.",negative
+"Awful quality.",negative
+"Horrible experience.",negative
+"Completely useless.",negative
+"Failed immediately.",negative
+"Not recommended.",negative
+"Poorly made.",negative
+"I want a refund.",negative
+"Defective.",negative
+"Will never buy again.",negative
+"Total scam.",negative
+"Does not work.",negative
+"Cheaply made.",negative
+"I am very angry.",negative

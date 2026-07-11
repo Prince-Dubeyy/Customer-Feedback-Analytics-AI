@@ -61,9 +61,9 @@ with open('../reports/model_evaluation.md', 'w') as f:
 
 # %%
 # Confusion Matrix
-cm = confusion_matrix(y_test, y_pred, labels=['negative', 'positive'])
+cm = confusion_matrix(y_test, y_pred, labels=['negative', 'neutral', 'positive'])
 plt.figure(figsize=(6, 5))
-sns.heatmap(cm, annot=True, fmt='d', xticklabels=['negative', 'positive'], yticklabels=['negative', 'positive'], cmap='Blues')
+sns.heatmap(cm, annot=True, fmt='d', xticklabels=['negative', 'neutral', 'positive'], yticklabels=['negative', 'neutral', 'positive'], cmap='Blues')
 plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')

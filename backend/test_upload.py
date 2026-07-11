@@ -1,52 +1,54 @@
 import asyncio
-import httpx
-from app.db.database import SessionLocal, engine, Base
-from app.models.all_models import FeedbackBatch, FeedbackItem
-from app.api.endpoints import get_dashboard_stats
-
-csv_content = """text,sentiment
-"The checkout process is terrible.",negative
-"I love the new design!",positive
-"It's okay, nothing special.",neutral
-"I couldn't find the search bar.",negative
-"""
-
-async def test():
-    # Write to a temp file
-    with open("temp_test.csv", "w") as f:
-        f.write(csv_content)
-        
-    print("Testing upload...")
-    async with httpx.AsyncClient(app=None, base_url="http://127.0.0.1:8000") as client:
-        # Actually I can just call the service directly without httpx
-        pass
-
-# Call the service directly
 import sys
 import os
+
 sys.path.append(os.path.abspath('.'))
 
+from app.db.database import SessionLocal
+from app.models.all_models import FeedbackItem
 from app.services.feedback_service import feedback_service
 from app.api.endpoints import reset_database
+from app.api.endpoints import get_dashboard_stats
 
 async def direct_test():
     db = SessionLocal()
-    print("Resetting DB...")
+    
+    # TEST MODE A (Labeled Dataset)
+    print("="*50)
+    print("TESTING MODE A: LABELED DATASET")
+    print("="*50)
     reset_database(db)
     
-    print("Uploading CSV...")
-    batch_id, reflection = await feedback_service.process_feedback_csv(db, "test.csv", csv_content)
-    
-    print("Batch ID:", batch_id)
-    items = db.query(FeedbackItem).all()
-    for item in items:
-        print(f"[{item.sentiment}] {item.original_text}")
+    with open("test_labeled_dataset.csv", "r", encoding="utf-8") as f:
+        csv_content = f.read()
         
-    from app.api.endpoints import get_dashboard_stats
-    stats = get_dashboard_stats(db)
-    print("Stats:")
-    print(f"Total: {stats.total_feedback}, Pos: {stats.positive}, Neu: {stats.neutral}, Neg: {stats.negative}")
+    await feedback_service.process_feedback_csv(db, "test_labeled_dataset.csv", csv_content)
     
+    stats_a = get_dashboard_stats(db)
+    print(f"Total: {stats_a.total_feedback}, Pos: {stats_a.positive}, Neu: {stats_a.neutral}, Neg: {stats_a.negative}")
+    assert stats_a.total_feedback == 60
+    assert stats_a.positive == 20
+    assert stats_a.neutral == 20
+    assert stats_a.negative == 20
+    print("MODE A PASSED!\n")
+
+    # TEST MODE B (Unlabeled Dataset)
+    print("="*50)
+    print("TESTING MODE B: PREDICTION DATASET")
+    print("="*50)
+    reset_database(db)
+    
+    with open("test_unlabeled_dataset.csv", "r", encoding="utf-8") as f:
+        csv_content = f.read()
+        
+    await feedback_service.process_feedback_csv(db, "test_unlabeled_dataset.csv", csv_content)
+    
+    stats_b = get_dashboard_stats(db)
+    print(f"Total: {stats_b.total_feedback}, Pos: {stats_b.positive}, Neu: {stats_b.neutral}, Neg: {stats_b.negative}")
+    assert stats_b.total_feedback == 60
+    assert (stats_b.positive + stats_b.neutral + stats_b.negative) == 60
+    print("MODE B PASSED!\n")
+
     db.close()
 
 if __name__ == "__main__":

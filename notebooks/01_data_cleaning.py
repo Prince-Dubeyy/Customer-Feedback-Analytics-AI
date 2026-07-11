@@ -43,7 +43,31 @@ def map_sentiment(label):
         return 'positive'
 
 df['sentiment'] = df['label'].apply(map_sentiment)
-print("Sentiment distribution:")
+
+# Inject synthetic Neutral data to ensure 3-class model support
+print("Injecting synthetic neutral dataset...")
+neutral_texts = [
+    "I bought this product yesterday.",
+    "It arrived on time.",
+    "The package was standard.",
+    "I have no strong opinion about this.",
+    "It works fine, nothing special.",
+    "It is okay.",
+    "Normal delivery speed.",
+    "I received the item.",
+    "It does what it says.",
+    "Standard quality."
+] * 50 # 500 neutral examples
+
+neutral_df = pd.DataFrame({
+    'text': neutral_texts,
+    'label': [2] * len(neutral_texts),
+    'sentiment': ['neutral'] * len(neutral_texts)
+})
+
+df = pd.concat([df, neutral_df], ignore_index=True)
+
+print("Sentiment distribution after injection:")
 print(df['sentiment'].value_counts())
 
 # %%
