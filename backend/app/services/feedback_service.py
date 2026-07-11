@@ -15,19 +15,31 @@ class FeedbackService:
         db.refresh(batch)
         
         # Parse CSV or Text lines
-        lines = []
+        records = []
         try:
             # Try parsing as CSV first
             f = StringIO(content)
             reader = csv.DictReader(f)
             if reader.fieldnames and 'text' in [fn.lower() for fn in reader.fieldnames]:
                 text_col = next(fn for fn in reader.fieldnames if fn.lower() == 'text')
-                lines = [row[text_col] for row in reader if row.get(text_col)]
+                
+                # Check for sentiment column
+                sentiment_col = None
+                if 'sentiment' in [fn.lower() for fn in reader.fieldnames]:
+                    sentiment_col = next(fn for fn in reader.fieldnames if fn.lower() == 'sentiment')
+
+                for row in reader:
+                    text_val = row.get(text_col)
+                    if text_val and text_val.strip():
+                        record = {"text": text_val.strip()}
+                        if sentiment_col and row.get(sentiment_col):
+                            record["sentiment"] = row.get(sentiment_col).strip().lower()
+                        records.append(record)
             else:
                 # Fallback to line by line
-                lines = [line.strip() for line in content.split('\n') if line.strip()]
+                records = [{"text": line.strip()} for line in content.split('\n') if line.strip()]
         except Exception:
-            lines = [line.strip() for line in content.split('\n') if line.strip()]
+            records = [{"text": line.strip()} for line in content.split('\n') if line.strip()]
             
         system_prompt = """You are an expert customer feedback analyzer. 
 Analyze the provided feedback and return strictly a JSON object with:
@@ -40,11 +52,14 @@ Analyze the provided feedback and return strictly a JSON object with:
         sem = asyncio.Semaphore(10)
         db_lock = asyncio.Lock()
 
-        async def process_single(text: str):
+        async def process_single(record: dict):
+            text = record["text"]
             async with sem:
-                # 1. ML Model for Sentiment Classification
-                from app.services.ml_service import ml_service
-                raw_sentiment = ml_service.predict_sentiment(text)
+                # 1. Use Pre-labelled Sentiment or Fallback to ML Model
+                raw_sentiment = record.get("sentiment")
+                if not raw_sentiment or raw_sentiment not in ['positive', 'negative', 'neutral']:
+                    from app.services.ml_service import ml_service
+                    raw_sentiment = ml_service.predict_sentiment(text)
                 
                 # 2. LLM for Deep Analysis (topics, complaints, features)
                 analysis = await router.execute_prompt(db, "analysis", system_prompt, text, db_lock=db_lock)
@@ -63,7 +78,7 @@ Analyze the provided feedback and return strictly a JSON object with:
                     )
                     db.add(item)
 
-        tasks = [process_single(text) for text in lines if text]
+        tasks = [process_single(rec) for rec in records]
         if tasks:
             await asyncio.gather(*tasks)
             

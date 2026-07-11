@@ -52,6 +52,27 @@ export default function Dashboard() {
     { name: 'Negative', value: stats?.negative || 0 },
   ];
 
+  const totalCalculated = (stats?.positive || 0) + (stats?.neutral || 0) + (stats?.negative || 0);
+  const isReconciled = !stats || stats.total_feedback === 0 || stats.total_feedback === totalCalculated;
+
+  if (!isReconciled) {
+    return (
+      <div className="flex h-full items-center justify-center pt-20">
+        <div className="bg-rose-500/10 border border-rose-500/20 p-8 rounded-xl max-w-lg text-center">
+          <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-white mb-2">Data Reconciliation Error</h2>
+          <p className="text-slate-300">
+            Sentiment counts do not match Total Feedback. <br/>
+            (Total: {stats.total_feedback} vs Calculated: {totalCalculated})
+          </p>
+          <button onClick={handleReset} className="mt-6 bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors">
+            Reset Database
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <header className="mb-8 flex justify-between items-end">

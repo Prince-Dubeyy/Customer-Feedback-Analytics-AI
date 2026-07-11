@@ -27,6 +27,9 @@ async def upload_feedback(
     if not file and not text:
         raise HTTPException(status_code=400, detail="Must provide either a file or text.")
         
+    # Completely replace the current dataset
+    reset_database(db)
+        
     content = ""
     filename = "manual_text"
     
