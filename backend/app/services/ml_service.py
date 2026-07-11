@@ -1,26 +1,11 @@
 import os
 import joblib
-import re
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-
-# Pre-load NLTK data (should be downloaded during pipeline setup, but safe to try)
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords', quiet=True)
-try:
-    nltk.data.find('corpora/wordnet')
-except LookupError:
-    nltk.download('wordnet', quiet=True)
+from app.core.text_preprocessing import preprocessor
 
 class MLService:
     def __init__(self):
         self.model = None
         self.vectorizer = None
-        self.stop_words = set(stopwords.words('english'))
-        self.lemmatizer = WordNetLemmatizer()
         self._load_models()
 
     def _load_models(self):
@@ -40,24 +25,8 @@ class MLService:
             print("[MLService WARNING] Models not found. Run the ML pipeline first.")
 
     def preprocess_text(self, text):
-        """Must EXACTLY MATCH the preprocessing pipeline from 02_nlp_preprocessing.ipynb"""
-        if not isinstance(text, str):
-            return ""
-        
-        # Lowercase
-        text = text.lower()
-        # Remove HTML
-        text = re.sub(r'<[^>]+>', '', text)
-        # Normalize whitespace
-        text = re.sub(r'\s+', ' ', text).strip()
-        
-        # Special characters removal
-        text = re.sub(r'[^a-zA-Z\s]', '', text)
-        # Tokenize (simple split)
-        tokens = text.split()
-        # Remove stopwords and lemmatize
-        tokens = [self.lemmatizer.lemmatize(word) for word in tokens if word not in self.stop_words]
-        return " ".join(tokens)
+        """Uses the shared preprocessing pipeline"""
+        return preprocessor.preprocess_text(text)
 
     def predict_sentiment(self, text):
         """Predicts the sentiment of a given text."""

@@ -21,23 +21,13 @@ df = pd.read_csv('../data/processed/cleaned_reviews.csv')
 print("Loaded cleaned reviews.")
 
 # %%
-stop_words = set(stopwords.words('english'))
-lemmatizer = WordNetLemmatizer()
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+from app.core.text_preprocessing import preprocessor
 
-def preprocess_text(text):
-    if not isinstance(text, str):
-        return ""
-    # Remove special characters
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-    # Tokenize (simple split for speed)
-    tokens = text.split()
-    # Remove stopwords and lemmatize
-    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
-    return " ".join(tokens)
-
-# %%
+# Apply preprocessing
 print("Applying preprocessing...")
-df['processed_text'] = df['text'].apply(preprocess_text)
+df['processed_text'] = df['text'].apply(preprocessor.preprocess_text)
 df = df[df['processed_text'].str.len() > 0]
 print("Preprocessing complete.")
 

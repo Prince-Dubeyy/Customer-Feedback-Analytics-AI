@@ -82,11 +82,30 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
                 
     top_complaints = [{"name": k, "value": v} for k, v in sorted(complaints.items(), key=lambda x: x[1], reverse=True)[:5]]
     
-    # Fake trending issues for dashboard based on latest memory
-    latest_memory = db.query(Memory).order_by(desc(Memory.batch_id)).first()
+    # Calculate real trending issues by comparing with previous batch
+    previous_batch = db.query(FeedbackBatch).filter(FeedbackBatch.id < latest_batch.id).order_by(desc(FeedbackBatch.id)).first()
+    prev_complaints_counts = {}
+    if previous_batch:
+        prev_items = db.query(FeedbackItem).filter(FeedbackItem.batch_id == previous_batch.id).all()
+        for item in prev_items:
+            if item.is_complaint and item.topics:
+                for t in item.topics:
+                    prev_complaints_counts[t] = prev_complaints_counts.get(t, 0) + 1
+                    
     trending_issues = []
-    if latest_memory:
-        trending_issues = [{"name": c, "trend": "up" if i % 2 == 0 else "down"} for i, c in enumerate(latest_memory.top_complaints)]
+    for tc in top_complaints:
+        name = tc["name"]
+        curr_val = tc["value"]
+        prev_val = prev_complaints_counts.get(name, 0)
+        
+        if curr_val > prev_val:
+            trend = "up"
+        elif curr_val < prev_val:
+            trend = "down"
+        else:
+            trend = "stable"
+            
+        trending_issues.append({"name": name, "trend": trend})
 
     return DashboardStatsResponse(
         total_feedback=total,

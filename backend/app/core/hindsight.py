@@ -15,9 +15,17 @@ class HindsightEngine:
             return None
             
         total = len(items)
-        positive = sum(1 for i in items if i.sentiment == "positive")
-        neutral = sum(1 for i in items if i.sentiment == "neutral")
-        negative = sum(1 for i in items if i.sentiment == "negative")
+        positive = 0
+        neutral = 0
+        negative = 0
+        for i in items:
+            sent = (i.sentiment or "neutral").lower().strip()
+            if sent == "positive":
+                positive += 1
+            elif sent == "negative":
+                negative += 1
+            else:
+                neutral += 1
         
         # Aggregate topics & complaints
         all_topics = {}

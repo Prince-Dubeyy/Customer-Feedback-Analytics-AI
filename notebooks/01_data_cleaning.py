@@ -47,14 +47,13 @@ print("Sentiment distribution:")
 print(df['sentiment'].value_counts())
 
 # %%
-# Basic text cleaning (lowercase, remove extra whitespace)
-def clean_text(text):
-    text = str(text).lower()
-    text = re.sub(r'<[^>]+>', '', text) # remove HTML tags
-    text = re.sub(r'\s+', ' ', text).strip() # normalize whitespace
-    return text
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+from app.core.text_preprocessing import preprocessor
 
-df['text'] = df['text'].apply(clean_text)
+# Clean text
+df['text'] = df['text'].apply(preprocessor.clean_text)
 # Remove empty reviews
 df = df[df['text'].str.len() > 0]
 
