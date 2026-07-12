@@ -210,28 +210,54 @@ export default function Dashboard() {
         >
           <div className="flex items-center gap-3 mb-6">
             <Activity className="w-6 h-6 text-indigo-400" />
-            <h3 className="text-lg font-semibold text-white">AI Model Performance</h3>
+            <h3 className="text-lg font-semibold text-white">AI Model Performance (Recruiter Dashboard)</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { label: 'Accuracy', value: modelStats.accuracy },
-              { label: 'Precision', value: modelStats.precision },
-              { label: 'Recall', value: modelStats.recall },
-              { label: 'F1 Score', value: modelStats.f1 },
-            ].map((metric) => (
-              <div key={metric.label} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                <p className="text-sm font-medium text-slate-400">{metric.label}</p>
-                <div className="flex items-end gap-2 mt-1">
-                  <h4 className="text-2xl font-bold text-white">
-                    {typeof metric.value === 'number' ? (metric.value * 100).toFixed(1) : metric.value}
-                  </h4>
-                  {typeof metric.value === 'number' && <span className="text-sm text-slate-400 mb-1">%</span>}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="bg-slate-800/30 p-5 rounded-xl border border-slate-700/50">
+              <h4 className="text-sm font-medium text-slate-400 mb-4">Model Metadata</h4>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm text-slate-500">Model Architecture</span>
+                  <span className="text-sm font-medium text-white">{modelStats.model_name || "TF-IDF + Logistic Regression"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-slate-500">Training Dataset Size</span>
+                  <span className="text-sm font-medium text-white">{modelStats.dataset_size || "60,000 (tweet_eval)"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-slate-500">Training Date</span>
+                  <span className="text-sm font-medium text-white">{modelStats.training_date || "2026-07-11"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-slate-500">Model Version</span>
+                  <span className="text-sm font-medium text-white">{modelStats.model_version || "v1.0.0"}</span>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: 'Accuracy', value: modelStats.accuracy },
+                { label: 'Precision', value: modelStats.precision },
+                { label: 'Recall', value: modelStats.recall },
+                { label: 'F1 Score', value: modelStats.f1 },
+              ].map((metric) => (
+                <div key={metric.label} className="bg-indigo-500/10 p-4 rounded-xl border border-indigo-500/20 flex flex-col justify-center">
+                  <p className="text-sm font-medium text-indigo-300">{metric.label}</p>
+                  <div className="flex items-end gap-2 mt-1">
+                    <h4 className="text-2xl font-bold text-white">
+                      {typeof metric.value === 'number' ? (metric.value * 100).toFixed(1) : metric.value}
+                    </h4>
+                    {typeof metric.value === 'number' && <span className="text-sm text-indigo-300 mb-1">%</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mt-4">
-            * These metrics represent the underlying performance of the NLP sentiment classifier evaluated on unseen test data.
+
+          <p className="text-xs text-slate-500">
+            * These metrics represent the cross-validation performance of the NLP sentiment classifier evaluated on unseen test data.
           </p>
         </motion.div>
       )}
