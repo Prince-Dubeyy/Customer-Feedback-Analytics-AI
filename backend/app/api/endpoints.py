@@ -172,8 +172,8 @@ def get_model_stats():
         if f1_match: stats['f1'] = float(f1_match.group(1))
         
     stats['model_name'] = "TF-IDF + Logistic Regression"
-    stats['dataset_size'] = "60,000 (tweet_eval)"
-    stats['training_date'] = "2026-07-11"
-    stats['model_version'] = "v1.0.0"
+    stats['dataset_size'] = "75,000 (Yelp Reviews)"
+    stats['training_date'] = "2026-07-12"
+    stats['model_version'] = "v1.1.0"
     
     return stats

@@ -1,20 +1,31 @@
-# Final Model Performance Report (Logistic Regression)
+# AI Model Performance Report
 
-- **Accuracy**: 0.6498
-- **Precision (weighted)**: 0.6581
-- **Recall (weighted)**: 0.6498
-- **F1 Score (weighted)**: 0.6511
+## Model Overview
+- **Model Architecture**: Logistic Regression
+- **Feature Engineering**: TF-IDF (ngram_range=(1,2), max_features=15000)
+- **Dataset**: Yelp Reviews Full (Mapped to 3 classes)
+- **Dataset Size**: 74996 samples
+- **Classes**: Positive, Neutral, Negative
+
+## Performance Metrics (Test Set)
+- **Accuracy**: 0.7361
+- **Precision (weighted)**: 0.7358
+- **Recall (weighted)**: 0.7361
+- **F1 Score (weighted)**: 0.7359
 
 ## Classification Report
-```
+```text
               precision    recall  f1-score   support
 
-    negative       0.53      0.69      0.60      2275
-     neutral       0.68      0.61      0.64      5494
-    positive       0.69      0.69      0.69      4208
+    negative       0.80      0.80      0.80      5000
+     neutral       0.64      0.64      0.64      5000
+    positive       0.77      0.77      0.77      5000
 
-    accuracy                           0.65     11977
-   macro avg       0.64      0.66      0.64     11977
-weighted avg       0.66      0.65      0.65     11977
+    accuracy                           0.74     15000
+   macro avg       0.74      0.74      0.74     15000
+weighted avg       0.74      0.74      0.74     15000
 
 ```
+
+## Next Steps
+This model achieves much higher accuracy due to the high quality dataset!

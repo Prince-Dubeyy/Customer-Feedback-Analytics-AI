@@ -45,13 +45,13 @@ This project solves this by providing a fully automated **AI-Powered Customer Fe
 ## Dataset
 
 **Dataset Description**
-To ensure the model generalizes perfectly to real-world data, the model is trained on a robust 60,000-record snapshot of the `cardiffnlp/tweet_eval` dataset, curated specifically for complex 3-class sentiment analysis (Positive, Neutral, Negative). 
+To ensure the model generalizes perfectly to real-world data, the model is trained on a robust 75,000-record snapshot of the `Yelp Reviews Full` dataset. 
 
 **Class Distribution**
-- **Total Records**: 60,000 (after cleaning)
-- **Positive**: ~20,000 (33.3%)
-- **Neutral**: ~20,000 (33.3%)
-- **Negative**: ~20,000 (33.3%)
+- **Total Records**: 75,000 (after downsampling)
+- **Positive**: 25,000 (33.3%)
+- **Neutral**: 25,000 (33.3%)
+- **Negative**: 25,000 (33.3%)
 
 *The dataset is perfectly balanced to ensure no negative bias and high precision on ambiguous neutral statements.*
 
@@ -75,22 +75,22 @@ To ensure the model generalizes perfectly to real-world data, the model is train
 
 The production model (TF-IDF + Logistic Regression) was selected via GridSearchCV and evaluated using stratified cross-validation on unseen holdout sets:
 
-- **Accuracy**: 65.2%
-- **Precision**: 66.1%
-- **Recall**: 65.2%
-- **F1 Score**: 65.4%
+- **Accuracy**: 73.6%
+- **Precision**: 73.6%
+- **Recall**: 73.6%
+- **F1 Score**: 73.6%
 
 ### Classification Report
 ```text
               precision    recall  f1-score   support
 
-    negative       0.67      0.72      0.69      3904
-     neutral       0.60      0.57      0.59      4488
-    positive       0.70      0.68      0.69      3593
+    negative       0.80      0.80      0.80      5000
+     neutral       0.64      0.64      0.64      5000
+    positive       0.77      0.77      0.77      5000
 
-    accuracy                           0.65     11985
-   macro avg       0.66      0.66      0.66     11985
-weighted avg       0.65      0.65      0.65     11985
+    accuracy                           0.74     15000
+   macro avg       0.74      0.74      0.74     15000
+weighted avg       0.74      0.74      0.74     15000
 ```
 
 ### Confusion Matrix
