@@ -45,7 +45,7 @@ This project solves this by providing a fully automated **AI-Powered Customer Fe
 ## Dataset
 
 **Dataset Description**
-To ensure the model generalizes perfectly to real-world data, the model is trained on a robust 75,000-record snapshot of the `Yelp Reviews Full` dataset. 
+To ensure the model generalizes perfectly to real-world data, the model is trained on a robust 75,000-record snapshot of the [Yelp Reviews Full](https://huggingface.co/datasets/Yelp/yelp_review_full) dataset via HuggingFace.
 
 **Class Distribution**
 - **Total Records**: 75,000 (after downsampling)
@@ -126,3 +126,9 @@ By deploying this platform, companies can:
 - **Frontend**: [https://customer-feedback-analytics-ai.vercel.app](https://customer-feedback-analytics-ai.vercel.app)
 - **Backend**: [https://customer-feedback-analytics-ai.onrender.com](https://customer-feedback-analytics-ai.onrender.com)
 - **GitHub**: [https://github.com/Prince-Dubeyy/Customer-Feedback-Analytics-AI](https://github.com/Prince-Dubeyy/Customer-Feedback-Analytics-AI)
+
+## Let's Connect 🤝
+
+Created by **Prince Dubey**
+- 💼 **LinkedIn**: [https://www.linkedin.com/in/prince-dubey-365056323/](https://www.linkedin.com/in/prince-dubey-365056323/)
+- 🌐 **Portfolio**: [https://prince-portfolio-lime-mu.vercel.app/](https://prince-portfolio-lime-mu.vercel.app/)
