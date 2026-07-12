@@ -101,7 +101,8 @@ weighted avg       0.74      0.74      0.74     15000
 
 ## Dashboard Screenshots
 
-*(Note: Add screenshot images here once deployed to GitHub)*
+<img width="1892" height="913" alt="image" src="https://github.com/user-attachments/assets/3cf412fc-01df-431c-ac48-8756cb9c1c20" />
+
 - **Overview Dashboard**: Showcasing KPIs and Sentiment Distribution.
 - **Model Performance Panel**: The dedicated recruiter-facing metadata panel displaying underlying ML metrics.
 
