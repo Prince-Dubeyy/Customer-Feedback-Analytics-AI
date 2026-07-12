@@ -4,8 +4,11 @@ import os
 
 sys.path.append(os.path.abspath('.'))
 
-from app.db.database import SessionLocal
+from app.db.database import SessionLocal, engine, Base
 from app.models.all_models import FeedbackItem
+
+# Create tables
+Base.metadata.create_all(bind=engine)
 from app.services.feedback_service import feedback_service
 from app.api.endpoints import reset_database
 from app.api.endpoints import get_dashboard_stats

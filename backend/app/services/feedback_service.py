@@ -71,29 +71,31 @@ Analyze the provided feedback text and return strictly a JSON object with:
                 if raw_sentiment in ['pos', '1']: raw_sentiment = 'positive'
                 elif raw_sentiment in ['neg', '0']: raw_sentiment = 'negative'
                 elif raw_sentiment in ['neu', '2', 'none']: raw_sentiment = 'neutral'
-                
+                confidence = 0.0
                 if raw_sentiment and raw_sentiment in ['positive', 'negative', 'neutral']:
                     # Mode A: Labeled Dataset Mode (Ground Truth)
-                    pass
+                    confidence = 1.0 # 100% confidence for ground truth
                 else:
                     # Mode B: Prediction Mode
                     try:
                         from app.services.ml_service import ml_service
-                        raw_sentiment = ml_service.predict_sentiment(text)
+                        raw_sentiment, confidence = ml_service.predict_sentiment(text)
                     except Exception as e:
                         print(f"ML prediction failed: {e}")
                         raw_sentiment = 'neutral' # safe fallback
+                        confidence = 0.0
                 
                 # 2. LLM for Deep Analysis (topics, complaints, features)
                 analysis = await router.execute_prompt(db, "analysis", system_prompt, text, db_lock=db_lock)
                 
-                print(f"[FeedbackService DEBUG] Final Sentiment: {raw_sentiment} | Is Complaint: {analysis.get('is_complaint')} | Topics: {analysis.get('topics')}")
+                print(f"[FeedbackService DEBUG] Final Sentiment: {raw_sentiment} (conf: {confidence:.2f}) | Is Complaint: {analysis.get('is_complaint')} | Topics: {analysis.get('topics')}")
 
                 async with db_lock:
                     item = FeedbackItem(
                         batch_id=batch.id,
                         original_text=text,
                         sentiment=raw_sentiment,
+                        sentiment_confidence=confidence,
                         topics=analysis.get("topics", []),
                         is_complaint=int(analysis.get("is_complaint", 0)),
                         is_feature_request=int(analysis.get("is_feature_request", 0)),

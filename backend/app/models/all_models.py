@@ -23,6 +23,7 @@ class FeedbackItem(Base):
     
     # Analysis results
     sentiment = Column(String) # positive, negative, neutral
+    sentiment_confidence = Column(Float, nullable=True)
     topics = Column(JSON) # List of strings
     is_complaint = Column(Integer, default=0) # boolean
     is_feature_request = Column(Integer, default=0) # boolean

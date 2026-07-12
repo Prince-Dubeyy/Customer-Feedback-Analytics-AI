@@ -41,6 +41,11 @@ export const getReport = async () => {
   return response.data;
 };
 
+export const getModelStats = async () => {
+  const response = await api.get('/model-stats');
+  return response.data;
+};
+
 export const resetData = async () => {
   const response = await api.post('/reset');
   return response.data;

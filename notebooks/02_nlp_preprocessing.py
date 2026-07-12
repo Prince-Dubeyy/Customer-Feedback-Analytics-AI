@@ -17,7 +17,7 @@ nltk.download('wordnet', quiet=True)
 
 # %%
 # Load cleaned data
-df = pd.read_csv('../data/processed/cleaned_reviews.csv')
+df = pd.read_csv('../data/raw/tweet_eval_sentiment.csv')
 print("Loaded cleaned reviews.")
 
 # %%

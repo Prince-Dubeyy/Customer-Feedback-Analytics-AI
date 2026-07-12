@@ -143,3 +143,32 @@ def generate_report(db: Session = Depends(get_db)):
         "risks": memories[0].top_complaints if memories else [],
         "opportunities": memories[0].top_requests if memories else []
     }
+
+@router.get("/model-stats")
+def get_model_stats():
+    import os
+    import re
+    # Path relative to backend/app/api/endpoints.py
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    report_path = os.path.join(base_dir, 'reports', 'model_performance.md')
+    
+    if not os.path.exists(report_path):
+        return {"accuracy": "N/A", "precision": "N/A", "recall": "N/A", "f1": "N/A"}
+        
+    stats = {}
+    with open(report_path, 'r') as f:
+        content = f.read()
+        
+        acc_match = re.search(r'\*\*Accuracy\*\*:\s*([\d\.]+)', content)
+        if acc_match: stats['accuracy'] = float(acc_match.group(1))
+        
+        prec_match = re.search(r'\*\*Precision \(weighted\)\*\*:\s*([\d\.]+)', content)
+        if prec_match: stats['precision'] = float(prec_match.group(1))
+        
+        rec_match = re.search(r'\*\*Recall \(weighted\)\*\*:\s*([\d\.]+)', content)
+        if rec_match: stats['recall'] = float(rec_match.group(1))
+        
+        f1_match = re.search(r'\*\*F1 Score \(weighted\)\*\*:\s*([\d\.]+)', content)
+        if f1_match: stats['f1'] = float(f1_match.group(1))
+        
+    return stats

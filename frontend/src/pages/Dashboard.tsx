@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis } from 'recharts';
-import { MessageSquare, ThumbsUp, AlertTriangle, TrendingUp, Trash2, MinusCircle } from 'lucide-react';
-import { getDashboardStats, resetData } from '../services/api';
+import { MessageSquare, ThumbsUp, AlertTriangle, TrendingUp, Trash2, MinusCircle, Activity } from 'lucide-react';
+import { getDashboardStats, resetData, getModelStats } from '../services/api';
 
 const COLORS = ['#10b981', '#6366f1', '#ef4444'];
 
 export default function Dashboard() {
   const [stats, setStats] = useState<any>(null);
+  const [modelStats, setModelStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,8 +30,12 @@ export default function Dashboard() {
 
   const loadStats = async () => {
     try {
-      const data = await getDashboardStats();
+      const [data, mStats] = await Promise.all([
+        getDashboardStats(),
+        getModelStats()
+      ]);
       setStats(data);
+      setModelStats(mStats);
     } catch (error) {
       console.error(error);
     } finally {
@@ -194,6 +199,43 @@ export default function Dashboard() {
           </div>
         </motion.div>
       </div>
+
+      {/* Model Performance Panel */}
+      {modelStats && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="glass-panel p-6 mt-8"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Activity className="w-6 h-6 text-indigo-400" />
+            <h3 className="text-lg font-semibold text-white">AI Model Performance</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { label: 'Accuracy', value: modelStats.accuracy },
+              { label: 'Precision', value: modelStats.precision },
+              { label: 'Recall', value: modelStats.recall },
+              { label: 'F1 Score', value: modelStats.f1 },
+            ].map((metric) => (
+              <div key={metric.label} className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                <p className="text-sm font-medium text-slate-400">{metric.label}</p>
+                <div className="flex items-end gap-2 mt-1">
+                  <h4 className="text-2xl font-bold text-white">
+                    {typeof metric.value === 'number' ? (metric.value * 100).toFixed(1) : metric.value}
+                  </h4>
+                  {typeof metric.value === 'number' && <span className="text-sm text-slate-400 mb-1">%</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-slate-500 mt-4">
+            * These metrics represent the underlying performance of the NLP sentiment classifier evaluated on unseen test data.
+          </p>
+        </motion.div>
+      )}
+
     </div>
   );
 }

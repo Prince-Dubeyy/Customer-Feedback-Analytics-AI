@@ -29,17 +29,24 @@ class MLService:
         return preprocessor.preprocess_text(text)
 
     def predict_sentiment(self, text):
-        """Predicts the sentiment of a given text."""
+        """Predicts the sentiment of a given text and returns (sentiment, confidence)."""
         if not self.model or not self.vectorizer:
             print("[MLService] Using fallback: Models not loaded.")
-            return "neutral"
+            return "neutral", 0.0
             
         processed_text = self.preprocess_text(text)
         if not processed_text:
-            return "neutral" # Default for empty
+            return "neutral", 0.0 # Default for empty
             
         vec = self.vectorizer.transform([processed_text])
         prediction = self.model.predict(vec)
-        return str(prediction[0]).lower().strip()
+        sentiment_label = str(prediction[0]).lower().strip()
+        
+        confidence = 0.0
+        if hasattr(self.model, "predict_proba"):
+            probs = self.model.predict_proba(vec)[0]
+            confidence = float(max(probs))
+            
+        return sentiment_label, confidence
 
 ml_service = MLService()
